@@ -1,0 +1,11 @@
+services:
+    # 開発環境
+    node:
+        build: ./docker/node
+        tty: true
+        volumes:
+            - ./app:/app
+        ports:
+            - "3000:3000"  # For the MCP Server
+            - "6274:6274"  # For the MCP Inspector Proxy Server
+            - "6277:6277"  # For the MCP server

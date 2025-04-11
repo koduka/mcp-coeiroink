@@ -1,0 +1,21 @@
+{
+  "compilerOptions": {
+    "lib": ["es2023"],
+    "module": "node16",
+    "moduleResolution": "node16",
+    "target": "es2022",
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "declaration": true,
+    "forceConsistentCasingInFileNames": true,
+    "baseUrl": ".",
+    "outDir": "dist",
+    "paths": {
+        "@/*": ["src/*"]
+    },
+    "types": ["node"]
+  },
+  "include": ["**/*.ts"],
+  "exclude": ["node_modules", "dist"]
+}

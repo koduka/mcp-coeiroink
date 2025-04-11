@@ -1,0 +1,36 @@
+{
+  "name": "mcp-coeiroink",
+  "version": "0.1.0",
+  "description": "MCP server for COEIROINK voice synthesis",
+  "main": "build/index.js",
+  "type": "module",
+  "scripts": {
+    "build": "tsup",
+    "dev": "fastmcp dev src/index.ts",
+    "inspecter": "fastmcp inspect src/index.ts",
+    "start": "node dist/index.js",
+    "generate:openapi-type": "openapi-typescript http://host.docker.internal:50032/openapi.json -o ./src/api/v1/type.d.ts"
+  },
+  "keywords": [
+    "mcp",
+    "coeiroink",
+    "voice",
+    "synthesis"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "fastmcp": "^1.21.0",
+    "openapi-fetch": "^0.13.5",
+    "tslib": "^2.8.1",
+    "zod": "^3.24.2"
+  },
+  "devDependencies": {
+    "@openapitools/openapi-generator-cli": "^2.18.4",
+    "@types/node": "^20.8.0",
+    "openapi-typescript": "^7.6.1",
+    "tsup": "^8.4.0",
+    "tsx": "^4.7.0",
+    "typescript": "^5.8.3"
+  }
+}
