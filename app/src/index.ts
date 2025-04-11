@@ -102,7 +102,28 @@ server.addTool({
         try {
             log.info("Fetching available speakers...");
 
-            const { data } = await client.GET("/v1/speakers");
+            const { data } = await client
+                .GET("/v1/speakers")
+                .then(({ data, ...rest }) => {
+                    const _data = data?.map(
+                        ({ base64Portrait, styles, ...rest }) => {
+                            return {
+                                styles: styles.map(
+                                    ({
+                                        base64Icon,
+                                        base64Portrait,
+                                        ...style
+                                    }) => style
+                                ),
+                                ...rest,
+                            };
+                        }
+                    );
+                    return {
+                        data: _data,
+                        ...rest,
+                    };
+                });
 
             log.info("Speakers fetched successfully");
 
