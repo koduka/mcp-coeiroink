@@ -25,37 +25,43 @@ server.addTool({
             const { data } = await client.POST("/v1/synthesis", {
                 headers: {
                     accept: "audio/wav",
+                    "Content-Type": "application/json",
                 },
                 body: {
-                    volumeScale: args.volumeScale,
+                    outputSamplingRate: 24000,
+                    startTrimBuffer: 0,
+                    endTrimBuffer: 0,
+                    pauseStartTrimBuffer: 0,
+                    pauseEndTrimBuffer: 0,
+                    volumeScale: 1,
                     pitchScale: args.pitchScale,
                     intonationScale: args.intonationScale,
-                    prePhonemeLength: args.prePhonemeLength,
-                    postPhonemeLength: args.postPhonemeLength,
-                    outputSamplingRate: args.outputSamplingRate,
-                    startTrimBuffer: args.startTrimBuffer,
-                    endTrimBuffer: args.endTrimBuffer,
-                    pauseStartTrimBuffer: args.pauseStartTrimBuffer,
-                    pauseEndTrimBuffer: args.pauseEndTrimBuffer,
+                    prePhonemeLength: args.prePhonemeLength || 0.1,
+                    postPhonemeLength: args.postPhonemeLength || 0.1,
                     speakerUuid: args.speakerUuid,
                     styleId: args.styleId,
                     text: args.text,
                     speedScale: args.speedScale,
                 },
+                parseAs: "arrayBuffer",
             });
 
             // WAVデータをファイルに保存
-            if (args.outputPath && data) {
+            if (args.outputFileName && data) {
                 try {
                     // 出力ディレクトリが存在しない場合は作成
-                    const outputDir = path.dirname(args.outputPath);
+                    const __dirname = path.dirname(import.meta.dirname)
+                    const outputDir = path.join(__dirname, 'outputs')
                     if (!fs.existsSync(outputDir)) {
                         fs.mkdirSync(outputDir, { recursive: true });
                     }
 
                     // WAVデータをファイルに書き込み
-                    fs.writeFileSync(args.outputPath, Buffer.from(data));
-                    log.info(`Voice saved to ${args.outputPath}`);
+                    fs.writeFileSync(
+                        `${outputDir}/${args.outputFileName}`,
+                        Buffer.from(data)
+                    );
+                    log.info(`Voice saved to ${args.outputFileName}`);
                 } catch (saveError) {
                     log.error(
                         `Failed to save voice to file: ${
@@ -76,8 +82,8 @@ server.addTool({
                         text: `Voice synthesized successfully for text: "${
                             args.text
                         }" using speaker: ${args.speakerUuid}. ${
-                            args.outputPath
-                                ? `Saved to: ${args.outputPath}`
+                            args.outputFileName
+                                ? `Saved to: ${args.outputFileName}`
                                 : ""
                         }`,
                     },
@@ -103,7 +109,11 @@ server.addTool({
             log.info("Fetching available speakers...");
 
             const { data } = await client
-                .GET("/v1/speakers")
+                .GET("/v1/speakers", {
+                    headers: {
+                        accept: "application/json",
+                    },
+                })
                 .then(({ data, ...rest }) => {
                     const _data = data?.map(
                         ({ base64Portrait, styles, ...rest }) => {
